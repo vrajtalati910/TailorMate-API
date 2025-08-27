@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('item_measurements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('item_id')->nullable()->constrained('items')->cascadeOnDelete()->cascadeOnUpdate();
+             $table->foreignId('item_id')->nullable()->constrained('items')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('measurement_id')->nullable()->constrained('measurements')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
