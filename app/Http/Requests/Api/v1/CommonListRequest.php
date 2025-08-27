@@ -1,10 +1,10 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Requests\Api\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class {{ class }} extends FormRequest
+class CommonListRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,9 @@ class {{ class }} extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'page'  => 'integer|gt:0',
+            'per_page' => 'integer|gt:0',
+            'search' => 'string',
         ];
     }
 }

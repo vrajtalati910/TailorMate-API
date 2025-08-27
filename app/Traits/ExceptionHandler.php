@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use App\Traits\ApiResponser;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 trait ExceptionHandler
 {
@@ -37,6 +38,9 @@ trait ExceptionHandler
                 return ApiResponser::errorResponse($e->getMessage(), 404);
             });
             $exceptions->render(function (HttpException $e) {
+                return ApiResponser::errorResponse($e->getMessage());
+            });
+            $exceptions->render(function (RouteNotFoundException $e) {
                 return ApiResponser::errorResponse($e->getMessage());
             });
         }

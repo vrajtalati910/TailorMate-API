@@ -1,10 +1,10 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Requests\Api\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class {{ class }} extends FormRequest
+class CreateMeasurementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class {{ class }} extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255'
         ];
     }
 }
