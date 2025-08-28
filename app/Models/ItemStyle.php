@@ -18,7 +18,11 @@ class ItemStyle extends Model
     protected $fillable = ['item_id', 'name'];
 
     //HIDDEN
-    protected $hidden = [];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'item_id'
+    ];
 
     //APPENDS
     protected $appends = [];

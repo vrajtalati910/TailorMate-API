@@ -18,4 +18,11 @@ return [
     'customer_updated_successfully' => "Customer Updated Successfully",
     'customer_creation_failed' => "Customer Creation Failed",
     'customer_update_failed' => "Customer Update Failed",
+
+    //ITEM
+    'item_list_returned_successfully' => "Item List Returned Successfully",
+    'item_created_successfully' => "Item Created Successfully",
+    'item_already_exists' => "Item Already Exists",
+    'item_updated_successfully' => "Item Updated Successfully",
+    'item_details_returned_successfully' => "Item Details Returned Successfully",
 ];

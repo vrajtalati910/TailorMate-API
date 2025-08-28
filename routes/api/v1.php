@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\CustomerController;
+use App\Http\Controllers\Api\v1\ItemController;
 use App\Http\Controllers\Api\v1\MeasurementController;
 use App\Http\Controllers\Api\v1\UserController;
 use Illuminate\Support\Facades\Route;
@@ -21,5 +22,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('/', [CustomerController::class, 'list']);
         Route::post('/create', [CustomerController::class, 'create']);
         Route::post('/update/{customer}', [CustomerController::class, 'update']);
+    });
+
+    //Items
+    Route::group(['prefix' => 'items'], function () { 
+        Route::get('/', [ItemController::class, 'list']);
+        Route::post('/create', [ItemController::class, 'create']);
+        Route::put('/update/{item}', [ItemController::class, 'update']);
+        Route::get('details/{item}', [ItemController::class, 'show']);
     });
 });

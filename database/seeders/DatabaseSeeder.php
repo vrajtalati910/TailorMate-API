@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             MeasurementsTableSeeder::class,
             CustomersTableSeeder::class,
+            ItemsTableSeeder::class,
         ]);
     }
 }
