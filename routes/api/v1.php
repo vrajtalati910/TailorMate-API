@@ -20,6 +20,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['prefix' => 'customers'], function () { 
         Route::get('/', [CustomerController::class, 'list']);
         Route::post('/create', [CustomerController::class, 'create']);
-        Route::put('/update/{customer}', [CustomerController::class, 'update']);
+        Route::post('/update/{customer}', [CustomerController::class, 'update']);
     });
 });

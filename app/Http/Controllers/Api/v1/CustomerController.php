@@ -76,25 +76,63 @@ class CustomerController extends Controller
 
     public function update(Customer $customer, CustomerUpdateRequest $request)
     {
-        if ($customer->name === $request->name) {
+        try {
+            // Handle image update
+            if ($request->hasFile('image')) {
+                // Delete existing image if it exists
+                if ($customer->image_path) {
+                    $this->deleteFile($customer->image_path);
+                }
+                
+                // Save new image
+                $imagePath = $this->saveFile($request->image, 'customers', $request->is_from_web ?? false, $request->extension ?? 'png');
+                $customer->image_path = $imagePath;
+            }
+
+            // Handle other fields - only update if present in request
+            if ($request->has('name')) {
+                $customer->name = $request->name;
+            }
+
+            if ($request->has('mobile')) {
+                $customer->mobile = $request->mobile;
+            }
+
+            if ($request->has('alt_mobile')) {
+                $customer->alt_mobile = $request->alt_mobile;
+            }
+
+            if ($request->has('reference')) {
+                $customer->reference = $request->reference;
+            }
+
+            if ($request->has('city')) {
+                $customer->city = $request->city;
+            }
+
+            // Check if there are any changes to update
+            if (!$customer->isDirty()) {
+                return response()->json([
+                    'message' => __('messages.nothing_to_update'),
+                    'status' => '0'
+                ]);
+            }
+
+            // Save the customer
+            $customer->save();
+
             return response()->json([
-                'message' => __('messages.nothing_to_update'),
+                'message' => __('messages.customer_updated_successfully'),
+                'data' => $customer,
+                'status' => '1'
+            ]);
+
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'message' => __('messages.customer_update_failed'),
                 'status' => '0'
             ]);
         }
-
-        if ($request->has('image')) {
-            $imagePath = $this->saveFile($request->image, 'customers', $request->is_from_web, $request->extension);
-        }
-
-        $customer->update([
-            'name' => $request->name
-        ]);
-
-        return response()->json([
-            'message' => __('messages.measurement_updated_successfully'),
-            'data' => $customer,
-            'status' => '1'
-        ]);
     }
 }
