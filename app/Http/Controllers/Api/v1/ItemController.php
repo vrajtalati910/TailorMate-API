@@ -46,13 +46,12 @@ class ItemController extends Controller
             ]);
 
             if ($request->style) {
-                $style = collect($request->style)->map(function ($name) {
+                $styles = collect($request->style)->map(function ($name) {
                     return ['name' => $name];
                 })->toArray();
 
-                $newCreated->styles()->createMany($style);
+                $newCreated->styles()->createMany($styles);
             }
-
 
             return response()->json([
                 'message' => __('messages.item_created_successfully'),
@@ -69,20 +68,48 @@ class ItemController extends Controller
 
     public function update(Item $item, UpdateItemRequest $request)
     {
-        if ($item->name === $request->name) {
+        $hasChanges = false;
+
+        // Update item name if changed
+        if ($item->name !== $request->name) {
+            $item->update([
+                'name' => $request->name
+            ]);
+            $hasChanges = true;
+        }
+
+        // Handle styles update
+        if ($request->has('style') && is_array($request->style)) {
+            foreach ($request->style as $styleData) {
+                if (isset($styleData['item_id']) && $styleData['item_id']) {
+                    // Update existing style
+                    $existingStyle = ItemStyle::find($styleData['item_id']);
+                    if ($existingStyle && $existingStyle->item_id === $item->id) {
+                        $existingStyle->update([
+                            'name' => $styleData['item_name']
+                        ]);
+                        $hasChanges = true;
+                    }
+                } else {
+                    // Create new style
+                    $item->styles()->create([
+                        'name' => $styleData['item_name']
+                    ]);
+                    $hasChanges = true;
+                }
+            }
+        }
+
+        if (!$hasChanges) {
             return response()->json([
                 'message' => __('messages.nothing_to_update'),
                 'status' => '0'
             ]);
         }
 
-        $item->update([
-            'name' => $request->name
-        ]);
-
         return response()->json([
             'message' => __('messages.item_updated_successfully'),
-            'data' => $item,
+            'data' => $item->load('styles'),
             'status' => '1'
         ]);
     }
