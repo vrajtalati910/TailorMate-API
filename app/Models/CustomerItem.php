@@ -44,12 +44,22 @@ class CustomerItem extends Model
 
     public function measurements()
     {
-        return $this->hasMany(CustomerItemMeasurement::class);
+        return $this->belongsToMany(
+            Measurement::class,
+            'customer_item_measurements',
+            'customer_item_id',
+            'measurement_id'
+        )->withPivot('value');
     }
 
     public function styles()
     {
-        return $this->hasMany(CustomerItemStyle::class);
+        return $this->belongsToMany(
+            ItemStyle::class,
+            'customer_item_styles',
+            'customer_item_id',
+            'item_style_id'
+        );
     }
 
     //ATTRIBUTES

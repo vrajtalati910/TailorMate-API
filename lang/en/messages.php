@@ -18,6 +18,10 @@ return [
     'customer_updated_successfully' => "Customer Updated Successfully",
     'customer_creation_failed' => "Customer Creation Failed",
     'customer_update_failed' => "Customer Update Failed",
+    'customer_details_returned_successfully' => "Customer Details Returned Successfully",
+    'customer_item_creation_failed' => "Customer Item Creation Failed",
+    'customer_item_created_successfully' => "Customer Item Created Successfully",
+    'measurement_count_mismatch' => "All measurements for the selected item needs to be filled",
 
     //ITEM
     'item_list_returned_successfully' => "Item List Returned Successfully",

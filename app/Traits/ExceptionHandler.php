@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Illuminate\Database\Eloquent\RelationNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
@@ -18,31 +19,34 @@ trait ExceptionHandler
     static function handleApiException(Exceptions $exceptions)
     {
 
-        if (request()->is('*api*')) {
-            $exceptions->render(function (QueryException $e) {
-                return ApiResponser::errorResponse($e->getMessage());
-            });
-            $exceptions->render(function (ValidationException $e) {
-                return ApiResponser::errorResponse($e->getMessage());
-            });
-            $exceptions->render(function (ModelNotFoundException $e) {
-                return ApiResponser::errorResponse($e->getMessage(), 404);
-            });
-            $exceptions->render(function (AuthenticationException $e) {
-                return ApiResponser::errorResponse($e->getMessage(), 401);
-            });
-            $exceptions->render(function (MethodNotAllowedHttpException $e) {
-                return ApiResponser::errorResponse($e->getMessage(), 405);
-            });
-            $exceptions->render(function (NotFoundHttpException $e) {
-                return ApiResponser::errorResponse($e->getMessage(), 404);
-            });
-            $exceptions->render(function (HttpException $e) {
-                return ApiResponser::errorResponse($e->getMessage());
-            });
-            $exceptions->render(function (RouteNotFoundException $e) {
-                return ApiResponser::errorResponse($e->getMessage());
-            });
-        }
+        // if (request()->is('*api*')) {
+        //     $exceptions->render(function (QueryException $e) {
+        //         return ApiResponser::errorResponse($e->getMessage());
+        //     });
+        //     $exceptions->render(function (ValidationException $e) {
+        //         return ApiResponser::errorResponse($e->getMessage());
+        //     });
+        //     $exceptions->render(function (ModelNotFoundException $e) {
+        //         return ApiResponser::errorResponse($e->getMessage(), 404);
+        //     });
+        //     $exceptions->render(function (AuthenticationException $e) {
+        //         return ApiResponser::errorResponse($e->getMessage(), 401);
+        //     });
+        //     $exceptions->render(function (MethodNotAllowedHttpException $e) {
+        //         return ApiResponser::errorResponse($e->getMessage(), 405);
+        //     });
+        //     $exceptions->render(function (NotFoundHttpException $e) {
+        //         return ApiResponser::errorResponse($e->getMessage(), 404);
+        //     });
+        //     $exceptions->render(function (HttpException $e) {
+        //         return ApiResponser::errorResponse($e->getMessage());
+        //     });
+        //     $exceptions->render(function (RouteNotFoundException $e) {
+        //         return ApiResponser::errorResponse($e->getMessage());
+        //     });
+        //     $exceptions->render(function (RelationNotFoundException $e) {
+        //         return ApiResponser::errorResponse($e->getMessage());
+        //     });
+        // }
     }
 }

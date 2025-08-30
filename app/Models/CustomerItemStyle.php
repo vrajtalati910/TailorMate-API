@@ -12,7 +12,7 @@ class CustomerItemStyle extends Model
     //public $timestamps = false;
 
     //TABLE
-    public $table = '';
+    public $table = 'customer_item_styles';
 
     //FILLABLE
     protected $fillable = ['customer_item_id', 'item_style_id'];

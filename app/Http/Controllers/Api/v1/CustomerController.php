@@ -5,10 +5,17 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\v1\CommonListRequest;
 use App\Http\Requests\Api\v1\CustomerCreateRequest;
+use App\Http\Requests\Api\v1\CustomerItemCreateRequest;
 use App\Http\Requests\Api\v1\CustomerUpdateRequest;
 use App\Models\Customer;
+use App\Models\CustomerItem;
+use App\Models\CustomerItemMeasurement;
+use App\Models\CustomerItemStyle;
+use App\Models\Item;
+use App\Models\ItemMeasurement;
 use App\Traits\FileManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
@@ -83,7 +90,7 @@ class CustomerController extends Controller
                 if ($customer->image_path) {
                     $this->deleteFile($customer->image_path);
                 }
-                
+
                 // Save new image
                 $imagePath = $this->saveFile($request->image, 'customers', $request->is_from_web ?? false, $request->extension ?? 'png');
                 $customer->image_path = $imagePath;
@@ -126,11 +133,64 @@ class CustomerController extends Controller
                 'data' => $customer,
                 'status' => '1'
             ]);
-
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json([
                 'message' => __('messages.customer_update_failed'),
+                'status' => '0'
+            ]);
+        }
+    }
+
+    public function show(Customer $customer)
+    {
+        return response()->json([
+            'message' => __('messages.customer_details_returned_successfully'),
+            'data' => $customer->load('customerItems'),
+            'status' => '1'
+        ]);
+    }
+
+    public function addItem(Customer $customer, CustomerItemCreateRequest $request)
+    {
+        try {
+            $result = DB::transaction(function () use ($customer, $request) {
+                $measurementIdsAndValues = $request->input('measurement');
+                $styleIds = $request->input('style.id');
+
+                $customerItem = CustomerItem::create([
+                    'customer_id' => $customer->id,
+                    'item_id' => $request->item_id,
+                ]);
+
+                foreach ($styleIds as $styleId) {
+                    CustomerItemStyle::create([
+                        'customer_item_id' => $customerItem->id,
+                        'item_style_id' => $styleId,
+                    ]);
+                }
+
+                foreach ($measurementIdsAndValues as $measurementIdAndValue) {
+                    CustomerItemMeasurement::create([
+                        'customer_item_id' => $customerItem->id,
+                        'measurement_id' => $measurementIdAndValue['id'],
+                        'value' => $measurementIdAndValue['value'],
+                    ]);
+                }
+
+                return [
+                    'message' => __('messages.customer_item_created_successfully'),
+                    'data' => $customerItem->load('measurements', 'styles'),
+                    'status' => '1'
+                ];
+            });
+
+            return response()->json($result);
+
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'message' => __('messages.customer_item_creation_failed'),
                 'status' => '0'
             ]);
         }
