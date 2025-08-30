@@ -24,7 +24,9 @@ class CreateItemRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'style' => 'nullable|array',
-            'style.*' => 'string'
+            'style.*' => 'string',
+            'measurement_ids' => 'required|array',
+            'measurement_ids.*' => 'integer|exists:measurements,id'
         ];
     }
 
@@ -36,6 +38,9 @@ class CreateItemRequest extends FormRequest
             'name.max'         => 'The item name cannot exceed 255 characters.',
             'style.array'      => 'The style must be an array.',
             'style.*.string'   => 'Each style must be a string.',
+            'measurement_ids.array'=> 'The measurements must be an array.',
+            'measurement_ids.*.integer'=> 'The measurement id must be an integer.',
+            'measurement_ids.*.exists'=> 'The measurement id does not exist.',
         ];
     }
 }

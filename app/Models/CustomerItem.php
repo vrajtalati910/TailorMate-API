@@ -18,7 +18,9 @@ class CustomerItem extends Model
     protected $fillable = ['customer_id', 'item_id'];
 
     //HIDDEN
-    protected $hidden = [];
+    protected $hidden = [
+        'pivot',
+    ];
 
     //APPENDS
     protected $appends = [];

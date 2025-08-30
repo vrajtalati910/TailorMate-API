@@ -28,7 +28,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['prefix' => 'items'], function () { 
         Route::get('/', [ItemController::class, 'list']);
         Route::post('/create', [ItemController::class, 'create']);
-        Route::put('/update/{item}', [ItemController::class, 'update']);
+        Route::post('/update/{item}', [ItemController::class, 'update']);
         Route::get('details/{item}', [ItemController::class, 'show']);
     });
 });

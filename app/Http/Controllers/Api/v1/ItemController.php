@@ -7,7 +7,9 @@ use App\Http\Requests\Api\v1\CommonListRequest;
 use App\Http\Requests\Api\v1\CreateItemRequest;
 use App\Http\Requests\Api\v1\UpdateItemRequest;
 use App\Models\Item;
+use App\Models\ItemMeasurement;
 use App\Models\ItemStyle;
+use Illuminate\Support\Facades\DB;
 
 class ItemController extends Controller
 {
@@ -53,9 +55,17 @@ class ItemController extends Controller
                 $newCreated->styles()->createMany($styles);
             }
 
+            if ($request->has('measurement_ids')) {
+                $measurements = collect($request->measurement_ids)->map(function ($id) {
+                    return ['measurement_id' => $id];
+                })->toArray();
+
+                $newCreated->measurements()->attach($measurements);
+            }
+
             return response()->json([
                 'message' => __('messages.item_created_successfully'),
-                'data' => $newCreated->load('styles'),
+                'data' => $newCreated->load('styles', 'measurements'),
                 'status' => '1'
             ]);
         }
@@ -68,49 +78,43 @@ class ItemController extends Controller
 
     public function update(Item $item, UpdateItemRequest $request)
     {
-        $hasChanges = false;
-
-        // Update item name if changed
-        if ($item->name !== $request->name) {
-            $item->update([
-                'name' => $request->name
-            ]);
-            $hasChanges = true;
-        }
-
-        // Handle styles update
-        if ($request->has('style') && is_array($request->style)) {
-            foreach ($request->style as $styleData) {
-                if (isset($styleData['item_id']) && $styleData['item_id']) {
-                    // Update existing style
-                    $existingStyle = ItemStyle::find($styleData['item_id']);
-                    if ($existingStyle && $existingStyle->item_id === $item->id) {
-                        $existingStyle->update([
-                            'name' => $styleData['item_name']
-                        ]);
-                        $hasChanges = true;
-                    }
-                } else {
-                    // Create new style
-                    $item->styles()->create([
-                        'name' => $styleData['item_name']
-                    ]);
-                    $hasChanges = true;
-                }
+        DB::transaction(function () use ($item, $request) {
+            // 1. Update name if changed
+            if ($item->name !== $request->name) {
+                $item->update(['name' => $request->name]);
             }
-        }
 
-        if (!$hasChanges) {
-            return response()->json([
-                'message' => __('messages.nothing_to_update'),
-                'status' => '0'
-            ]);
-        }
+            // 2. Handle removing measurements
+            if ($request->has('remove.measurements.id')) {
+                $removeMeasurementIds = $request->input('remove.measurements.id', []);
+                ItemMeasurement::whereIn('id', $removeMeasurementIds)->delete();
+            }
+
+            // 3. Handle adding measurements
+            if ($request->has('add.measurements.id')) {
+                $addMeasurementIds = $request->input('add.measurements.id', []);
+                $item->measurements()->attach($addMeasurementIds);
+            }
+
+            // 4. Handle removing styles
+            if ($request->has('remove.styles.id')) {
+                $removeStyleIds = $request->input('remove.styles.id', []);
+                ItemStyle::whereIn('id', $removeStyleIds)->delete();
+            }
+
+            // 5. Handle adding styles
+            if ($request->has('add.styles.name')) {
+                $addStyleNames = $request->input('add.styles.name', []);
+                foreach ($addStyleNames as $styleName) {
+                    $item->styles()->create(['name' => $styleName]);
+                }    
+            }
+        });
 
         return response()->json([
             'message' => __('messages.item_updated_successfully'),
-            'data' => $item->load('styles'),
-            'status' => '1'
+            'data'    => $item->load('styles', 'measurements'),
+            'status'  => '1'
         ]);
     }
 

@@ -22,25 +22,45 @@ class UpdateItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'style' => 'nullable|array',
-            'style.*.item_id' => 'nullable|integer|exists:item_styles,id',
-            'style.*.item_name' => 'required_with:style.*|string|max:255'
+            'name' => ['required', 'string', 'max:255', 'unique:items,name,' . $this->item->id],
+
+            // Remove section
+            'remove.measurements.id'   => ['sometimes', 'array'],
+            'remove.measurements.id.*' => ['integer', 'exists:item_measurements,id'],
+            'remove.styles.id'         => ['sometimes', 'array'],
+            'remove.styles.id.*'       => ['integer', 'exists:item_styles,id'],
+
+            // Add section
+            'add.measurements.id'   => ['sometimes', 'array'],
+            'add.measurements.id.*' => ['integer', 'exists:measurements,id'],
+            'add.styles.name'       => ['sometimes', 'array'],
+            'add.styles.name.*'     => ['string', 'max:255'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required'              => 'The item name is required.',
-            'name.string'                => 'The item name must be a string.',
-            'name.max'                   => 'The item name cannot exceed 255 characters.',
-            'style.array'                => 'The style must be an array.',
-            'style.*.item_id.integer'    => 'The style ID must be an integer.',
-            'style.*.item_id.exists'     => 'The style ID does not exist.',
-            'style.*.item_name.required_with' => 'The style name is required when style is provided.',
-            'style.*.item_name.string'   => 'The style name must be a string.',
-            'style.*.item_name.max'      => 'The style name cannot exceed 255 characters.',
+            'name.required' => 'Item name is required.',
+            'name.string'   => 'Item name must be a valid string.',
+            'name.max'      => 'Item name may not be greater than 255 characters.',
+            'name.unique'   => 'Item with this name already exists.',
+
+            'remove.measurements.id.array'   => 'Measurements to remove must be an array.',
+            'remove.measurements.id.*.integer' => 'Each measurement ID must be an integer.',
+            'remove.measurements.id.*.exists'  => 'One or more measurements you are trying to remove do not exist.',
+
+            'remove.styles.id.array'   => 'Styles to remove must be an array.',
+            'remove.styles.id.*.integer' => 'Each style ID must be an integer.',
+            'remove.styles.id.*.exists'  => 'One or more styles you are trying to remove do not exist.',
+
+            'add.measurements.id.array'   => 'Measurements to add must be an array.',
+            'add.measurements.id.*.integer' => 'Each measurement ID must be an integer.',
+            'add.measurements.id.*.exists'  => 'One or more measurements you are trying to add do not exist.',
+
+            'add.styles.name.array'   => 'Styles to add must be an array.',
+            'add.styles.name.*.string' => 'Each style name must be a valid string.',
+            'add.styles.name.*.max'    => 'Each style name may not be greater than 255 characters.',
         ];
     }
 }

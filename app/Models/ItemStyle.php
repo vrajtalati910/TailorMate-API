@@ -21,7 +21,8 @@ class ItemStyle extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
-        'item_id'
+        'item_id',
+        'pivot',
     ];
 
     //APPENDS

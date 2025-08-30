@@ -20,7 +20,9 @@ class Item extends Model
     ];
 
     //HIDDEN
-    protected $hidden = [];
+    protected $hidden = [
+        'pivot'
+    ];
 
     //APPENDS
     protected $appends = [];
@@ -34,7 +36,12 @@ class Item extends Model
     // RELATIONSHIPS
     public function measurements()
     {
-        return $this->belongsToMany(Measurement::class, 'item_measurements');
+        return $this->belongsToMany(
+            Measurement::class,
+            'item_measurements',
+            'item_id',
+            'measurement_id'
+        );
     }
 
     public function styles()

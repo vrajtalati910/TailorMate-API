@@ -22,7 +22,8 @@ class Measurement extends Model
     //HIDDEN
     protected $hidden = [
         'created_at',
-        'updated_at'
+        'updated_at',
+        'pivot'
     ];
 
     //APPENDS
