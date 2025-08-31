@@ -19,7 +19,10 @@ class CustomerItemMeasurement extends Model
 
 
     //HIDDEN
-    protected $hidden = [];
+    protected $hidden = [
+        'updated_at',
+        'created_at'
+    ];
 
     //APPENDS
     protected $appends = [];

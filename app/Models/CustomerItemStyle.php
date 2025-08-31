@@ -18,7 +18,10 @@ class CustomerItemStyle extends Model
     protected $fillable = ['customer_item_id', 'item_style_id'];
 
     //HIDDEN
-    protected $hidden = [];
+    protected $hidden = [
+        'created_at',
+        'updated_at'
+    ];
 
     //APPENDS
     protected $appends = [];

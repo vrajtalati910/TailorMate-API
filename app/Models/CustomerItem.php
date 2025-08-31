@@ -20,6 +20,8 @@ class CustomerItem extends Model
     //HIDDEN
     protected $hidden = [
         'pivot',
+        'created_at',
+        'updated_at'
     ];
 
     //APPENDS
@@ -40,6 +42,17 @@ class CustomerItem extends Model
     public function item()
     {
         return $this->belongsTo(Item::class);
+    }
+
+    public function measurementRecords()
+    {
+        return $this->hasMany(CustomerItemMeasurement::class)->with('measurement');
+    }
+
+    // Get style records with item style name
+    public function styleRecords()
+    {
+        return $this->hasMany(CustomerItemStyle::class)->with('style');
     }
 
     public function measurements()

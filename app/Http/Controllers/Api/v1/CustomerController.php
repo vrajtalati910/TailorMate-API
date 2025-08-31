@@ -186,7 +186,6 @@ class CustomerController extends Controller
             });
 
             return response()->json($result);
-
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json([
@@ -194,5 +193,14 @@ class CustomerController extends Controller
                 'status' => '0'
             ]);
         }
+    }
+
+    public function itemsDetails(CustomerItem $customerItems)
+    {
+        return response()->json([
+            'message' => __('messages.customer_item_details_fetched'),
+            'data' => $customerItems->load('measurementRecords', 'styleRecords'),
+            'status' => '1'
+        ]);
     }
 }
