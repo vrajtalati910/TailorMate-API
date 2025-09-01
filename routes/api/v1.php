@@ -20,6 +20,16 @@ Route::get('/seed', function () {
     return 'Database seeded successfully!';
 });
 
+Route::get('/migrate-fresh-seed', function () {
+    Artisan::call('migrate:fresh --seed');
+    return 'Database migrated and seeded successfully!';
+});
+
+Route::get('/optimize-clear', function () {
+    Artisan::call('optimize:clear');
+    return 'Optimize cleared successfully!';
+});
+
 Route::get('/get-all-users', function () {
     return User::all();
 });
