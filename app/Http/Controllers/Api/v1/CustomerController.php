@@ -39,7 +39,7 @@ class CustomerController extends Controller
             return response()->json(
                 collect([
                     'message' => __('messages.customer_list_returned_successfully'),
-                    'status' => '1',
+                    'status' => 1,
                 ])->merge($customers->simplePaginate($request->has('per_page') ? $request->per_page : 10))
             );
         }
@@ -47,7 +47,7 @@ class CustomerController extends Controller
         return response()->json([
             'message' => __('messages.customer_list_returned_successfully'),
             'data' => $customers->get(),
-            'status' => '1'
+            'status' => 1
         ]);
     }
 
@@ -71,13 +71,13 @@ class CustomerController extends Controller
             return response()->json([
                 'message' => __('messages.customer_created_successfully'),
                 'data' => $customer->refresh(),
-                'status' => '1'
+                'status' => 1
             ]);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json([
                 'message' => __('messages.customer_creation_failed'),
-                'status' => '0'
+                'status' => 0
             ]);
         }
     }
@@ -122,7 +122,7 @@ class CustomerController extends Controller
             if (!$customer->isDirty()) {
                 return response()->json([
                     'message' => __('messages.nothing_to_update'),
-                    'status' => '0'
+                    'status' => 0
                 ]);
             }
 
@@ -132,13 +132,13 @@ class CustomerController extends Controller
             return response()->json([
                 'message' => __('messages.customer_updated_successfully'),
                 'data' => $customer,
-                'status' => '1'
+                'status' => 1
             ]);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json([
                 'message' => __('messages.customer_update_failed'),
-                'status' => '0'
+                'status' => 0
             ]);
         }
     }
@@ -148,7 +148,7 @@ class CustomerController extends Controller
         return response()->json([
             'message' => __('messages.customer_details_returned_successfully'),
             'data' => $customer->load('customerItems'),
-            'status' => '1'
+            'status' => 1
         ]);
     }
 
@@ -182,7 +182,7 @@ class CustomerController extends Controller
                 return [
                     'message' => __('messages.customer_item_created_successfully'),
                     'data' => $customerItem->load('measurements', 'styles'),
-                    'status' => '1'
+                    'status' => 1
                 ];
             });
 
@@ -191,7 +191,7 @@ class CustomerController extends Controller
             Log::error($th->getMessage());
             return response()->json([
                 'message' => __('messages.customer_item_creation_failed'),
-                'status' => '0'
+                'status' => 1
             ]);
         }
     }
@@ -241,14 +241,14 @@ class CustomerController extends Controller
                 if (!$hasChanges) {
                     return [
                         'message' => __('messages.nothing_to_update'),
-                        'status' => '0'
+                        'status' => 0
                     ];
                 }
 
                 return [
                     'message' => __('messages.customer_item_updated_successfully'),
                     'data' => $customerItems->load('measurementRecords', 'styleRecords'),
-                    'status' => '1'
+                    'status' => 1
                 ];
             });
 
@@ -257,16 +257,17 @@ class CustomerController extends Controller
             Log::error($th->getMessage());
             return response()->json([
                 'message' => __('messages.customer_item_update_failed'),
-                'status' => '0'
+                'status' => 0
             ]);
         }
     }
+
     public function itemsDetails(CustomerItem $customerItems)
     {
         return response()->json([
             'message' => __('messages.customer_item_details_fetched'),
             'data' => $customerItems->load('measurementRecords', 'styleRecords'),
-            'status' => '1'
+            'status' => 1
         ]);
     }
 }

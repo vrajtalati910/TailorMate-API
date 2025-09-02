@@ -17,7 +17,7 @@ class UserController extends Controller
         if (!Hash::check($request->password, $user->password)) {
             return response()->json([
                 'message' => __('auth.incorrect_password'),
-                'status' => '0'
+                'status' => 0
             ]);
         }
 
@@ -25,7 +25,7 @@ class UserController extends Controller
             'message' => __('auth.user_login'),
             'data' => $user,
             'token' => $user->createToken($request->header('User-Agent') ?? $request->ip())->plainTextToken,
-            'status' => '1'
+            'status' => 1
         ]);
     }
 }

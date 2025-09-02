@@ -26,7 +26,7 @@ class ItemController extends Controller
             return response()->json(
                 collect([
                     'message' => __('messages.item_list_returned_successfully'),
-                    'status' => '1',
+                    'status' => 1,
                 ])->merge($items->simplePaginate($request->has('per_page') ? $request->per_page : 10))
             );
         }
@@ -34,7 +34,7 @@ class ItemController extends Controller
         return response()->json([
             'message' => __('messages.item_list_returned_successfully'),
             'data' => $items->get(),
-            'status' => '1'
+            'status' => 1
         ]);
     }
 
@@ -66,13 +66,13 @@ class ItemController extends Controller
             return response()->json([
                 'message' => __('messages.item_created_successfully'),
                 'data' => $newCreated->load('styles', 'measurements'),
-                'status' => '1'
+                'status' => 1
             ]);
         }
 
         return response()->json([
             'message' => __('messages.item_already_exists'),
-            'status' => '0'
+            'status' => 0
         ]);
     }
 
@@ -114,7 +114,7 @@ class ItemController extends Controller
         return response()->json([
             'message' => __('messages.item_updated_successfully'),
             'data'    => $item->load('styles', 'measurements'),
-            'status'  => '1'
+            'status'  => 1
         ]);
     }
 
@@ -125,7 +125,7 @@ class ItemController extends Controller
         return response()->json([
             'message' => __('messages.item_details_returned_successfully'),
             'data' => $item,
-            'status' => '1'
+            'status' => 1
         ]);
     }
 }

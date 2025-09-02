@@ -23,7 +23,7 @@ class MeasurementController extends Controller
             return response()->json(
                 collect([
                     'message' => __('messages.measurement_list_returned_successfully'),
-                    'status' => '1',
+                    'status' => 1,
                 ])->merge($measurements->simplePaginate($request->has('per_page') ? $request->per_page : 10))
             );
         }
@@ -31,7 +31,7 @@ class MeasurementController extends Controller
         return response()->json([
             'message' => __('messages.measurement_list_returned_successfully'),
             'data' => $measurements->get(),
-            'status' => '1'
+            'status' => 1
         ]);
     }
 
@@ -47,13 +47,13 @@ class MeasurementController extends Controller
             return response()->json([
                 'message' => __('messages.measurement_created_successfully'),
                 'data' => $newCreated->refresh(),
-                'status' => '1'
+                'status' => 1
             ]);
         }
 
         return response()->json([
             'message' => __('messages.measurement_already_exists'),
-            'status' => '0'
+            'status' => 0
         ]);
     }
 
@@ -62,7 +62,7 @@ class MeasurementController extends Controller
         if ($measurement->name === $request->name) {
             return response()->json([
                 'message' => __('messages.nothing_to_update'),
-                'status' => '0'
+                'status' => 0
             ]);
         }
 
@@ -73,7 +73,7 @@ class MeasurementController extends Controller
         return response()->json([
             'message' => __('messages.measurement_updated_successfully'),
             'data' => $measurement,
-            'status' => '1'
+            'status' => 1
         ]);
     }
 }
