@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\v1\CommonListRequest;
 use App\Http\Requests\Api\v1\CustomerCreateRequest;
 use App\Http\Requests\Api\v1\CustomerItemCreateRequest;
+use App\Http\Requests\Api\v1\CustomerItemUpdateRequest;
 use App\Http\Requests\Api\v1\CustomerUpdateRequest;
 use App\Models\Customer;
 use App\Models\CustomerItem;
@@ -195,6 +196,71 @@ class CustomerController extends Controller
         }
     }
 
+    public function updateItem(CustomerItem $customerItems, CustomerItemUpdateRequest $request)
+    {
+        try {
+            $result = DB::transaction(function () use ($customerItems, $request) {
+                $hasChanges = false;
+
+                // Update measurements if provided
+                if ($request->has('measurement')) {
+                    $measurementIdsAndValues = $request->input('measurement');
+                    
+                    // Delete existing measurements
+                    CustomerItemMeasurement::where('customer_item_id', $customerItems->id)->delete();
+                    
+                    // Create new measurements
+                    foreach ($measurementIdsAndValues as $measurementIdAndValue) {
+                        CustomerItemMeasurement::create([
+                            'customer_item_id' => $customerItems->id,
+                            'measurement_id' => $measurementIdAndValue['id'],
+                            'value' => $measurementIdAndValue['value'],
+                        ]);
+                    }
+                    $hasChanges = true;
+                }
+
+                // Update styles if provided
+                if ($request->has('style.id')) {
+                    $styleIds = $request->input('style.id');
+                    
+                    // Delete existing styles
+                    CustomerItemStyle::where('customer_item_id', $customerItems->id)->delete();
+                    
+                    // Create new styles
+                    foreach ($styleIds as $styleId) {
+                        CustomerItemStyle::create([
+                            'customer_item_id' => $customerItems->id,
+                            'item_style_id' => $styleId,
+                        ]);
+                    }
+                    $hasChanges = true;
+                }
+
+                // Check if any changes were made
+                if (!$hasChanges) {
+                    return [
+                        'message' => __('messages.nothing_to_update'),
+                        'status' => '0'
+                    ];
+                }
+
+                return [
+                    'message' => __('messages.customer_item_updated_successfully'),
+                    'data' => $customerItems->load('measurementRecords', 'styleRecords'),
+                    'status' => '1'
+                ];
+            });
+
+            return response()->json($result);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json([
+                'message' => __('messages.customer_item_update_failed'),
+                'status' => '0'
+            ]);
+        }
+    }
     public function itemsDetails(CustomerItem $customerItems)
     {
         return response()->json([

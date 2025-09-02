@@ -21,6 +21,8 @@ return [
     'customer_details_returned_successfully' => "Customer Details Returned Successfully",
     'customer_item_creation_failed' => "Customer Item Creation Failed",
     'customer_item_created_successfully' => "Customer Item Created Successfully",
+    'customer_item_updated_successfully' => "Customer Item Updated Successfully",
+    'customer_item_update_failed' => "Customer Item Update Failed",
     'measurement_count_mismatch' => "All measurements for the selected item needs to be filled",
     'customer_item_details_fetched' => "Items details fetched for customer successfully",
 

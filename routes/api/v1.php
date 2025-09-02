@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('details/{customer}', [CustomerController::class, 'show']);
 
         Route::post('/add-item/{customer}', [CustomerController::class, 'addItem']);
+        Route::post('/update-item/{customerItems}', [CustomerController::class,'updateItem']);
         Route::get('/items-details/{customerItems}', [CustomerController::class,'itemsDetails']);
     });
 
