@@ -40,7 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['prefix' => 'measurements'], function () { 
         Route::get('/', [MeasurementController::class, 'list']);
         Route::post('/create', [MeasurementController::class, 'create']);
-        Route::put('/update/{measurement}', [MeasurementController::class, 'update']);
+        Route::post('/update/{measurement}', [MeasurementController::class, 'update']);
     });
 
     //Customers
