@@ -32,7 +32,7 @@ class CustomerController extends Controller
                 ->orWhere('mobile', 'like', $search)
                 ->orWhere('alt_mobile', 'like', $search)
                 ->orWhere('city', 'like', $search)
-                ->orWhere('refrence', 'like', $search);
+                ->orWhere('reference', 'like', $search);
         }
 
         if ($request->has('page')) {
