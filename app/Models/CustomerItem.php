@@ -31,7 +31,9 @@ class CustomerItem extends Model
     protected $with = [];
 
     //CASTS
-    protected $casts = [];
+    protected $casts = [
+        'item_id' => 'string'
+    ];
 
     //RELATIONSHIPS
     public function customer()

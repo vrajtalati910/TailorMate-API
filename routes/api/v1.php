@@ -8,9 +8,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [UserController::class, 'login']);
-
-
 Route::get('/migrate', function () {
     Artisan::call('migrate');
     return 'Database migrated successfully!';
@@ -41,6 +38,7 @@ Route::get('/get-all-users', function () {
     return User::all();
 });
 
+Route::post('/login', [UserController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //Measurements
