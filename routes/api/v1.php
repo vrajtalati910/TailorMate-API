@@ -15,12 +15,19 @@ Route::get('/migrate', function () {
     Artisan::call('migrate');
     return 'Database migrated successfully!';
 });
+
+Route::get('/migrate-fresh', function () {
+    Artisan::call('migrate:fresh');
+    Artisan::call('db:seed --class=UserSeeder');
+    return 'Database migrated successfully!';
+});
+
 Route::get('/seed', function () {
     Artisan::call('db:seed');
     return 'Database seeded successfully!';
 });
 
-Route::get('/migrate-fresh-seed', function () {
+Route::get('/migrate-fresh-seed-whole', function () {
     Artisan::call('migrate:fresh --seed');
     return 'Database migrated and seeded successfully!';
 });

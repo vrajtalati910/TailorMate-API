@@ -78,44 +78,68 @@ class ItemController extends Controller
 
     public function update(Item $item, UpdateItemRequest $request)
     {
-        DB::transaction(function () use ($item, $request) {
-            // 1. Update name if changed
-            if ($item->name !== $request->name) {
-                $item->update(['name' => $request->name]);
-            }
+        try {
+            $result = DB::transaction(function () use ($item, $request) {
+                $hasChanges = false;
 
-            // 2. Handle removing measurements
-            if ($request->has('remove.measurements.id')) {
-                $removeMeasurementIds = $request->input('remove.measurements.id', []);
-                ItemMeasurement::whereIn('id', $removeMeasurementIds)->delete();
-            }
+                // Update name if changed
+                if ($item->name !== $request->name) {
+                    $item->update(['name' => $request->name]);
+                    $hasChanges = true;
+                }
 
-            // 3. Handle adding measurements
-            if ($request->has('add.measurements.id')) {
-                $addMeasurementIds = $request->input('add.measurements.id', []);
-                $item->measurements()->attach($addMeasurementIds);
-            }
+                // Replace measurements if provided
+                if ($request->has('measurement_ids')) {
+                    // Delete existing measurements
+                    ItemMeasurement::where('item_id', $item->id)->delete();
+                    
+                    // Create new measurements
+                    $measurementIds = $request->input('measurement_ids');
+                    $measurements = collect($measurementIds)->map(function ($id) {
+                        return ['measurement_id' => $id];
+                    })->toArray();
+                    
+                    $item->measurements()->attach($measurements);
+                    $hasChanges = true;
+                }
 
-            // 4. Handle removing styles
-            if ($request->has('remove.styles.id')) {
-                $removeStyleIds = $request->input('remove.styles.id', []);
-                ItemStyle::whereIn('id', $removeStyleIds)->delete();
-            }
+                // Replace styles if provided
+                if ($request->has('style')) {
+                    // Delete existing styles
+                    ItemStyle::where('item_id', $item->id)->delete();
+                    
+                    // Create new styles
+                    $styleNames = $request->input('style');
+                    $styles = collect($styleNames)->map(function ($name) {
+                        return ['name' => $name];
+                    })->toArray();
+                    
+                    $item->styles()->createMany($styles);
+                    $hasChanges = true;
+                }
 
-            // 5. Handle adding styles
-            if ($request->has('add.styles.name')) {
-                $addStyleNames = $request->input('add.styles.name', []);
-                foreach ($addStyleNames as $styleName) {
-                    $item->styles()->create(['name' => $styleName]);
-                }    
-            }
-        });
+                // Check if any changes were made
+                if (!$hasChanges) {
+                    return [
+                        'message' => __('messages.nothing_to_update'),
+                        'status' => '0'
+                    ];
+                }
 
-        return response()->json([
-            'message' => __('messages.item_updated_successfully'),
-            'data'    => $item->load('styles', 'measurements'),
-            'status'  => 1
-        ]);
+                return [
+                    'message' => __('messages.item_updated_successfully'),
+                    'data' => $item->load('styles', 'measurements'),
+                    'status' => '1'
+                ];
+            });
+
+            return response()->json($result);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => __('messages.item_update_failed'),
+                'status' => '0'
+            ]);
+        }
     }
 
     public function show(Item $item)
