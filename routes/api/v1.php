@@ -38,6 +38,11 @@ Route::get('/get-all-users', function () {
     return User::all();
 });
 
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage linked successfully!';
+});
+
 Route::post('/login', [UserController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
