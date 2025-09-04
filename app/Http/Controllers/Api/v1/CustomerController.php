@@ -245,6 +245,9 @@ class CustomerController extends Controller
                     ];
                 }
 
+                
+                $customerItems->item_id = (string) $customerItems->item_id;
+
                 return [
                     'message' => __('messages.customer_item_updated_successfully'),
                     'data' => $customerItems->load('measurementRecords', 'styleRecords'),
