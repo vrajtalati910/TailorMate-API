@@ -122,14 +122,14 @@ class ItemController extends Controller
                 if (!$hasChanges) {
                     return [
                         'message' => __('messages.nothing_to_update'),
-                        'status' => '0'
+                        'status' => 0
                     ];
                 }
 
                 return [
                     'message' => __('messages.item_updated_successfully'),
                     'data' => $item->load('styles', 'measurements'),
-                    'status' => '1'
+                    'status' => 1
                 ];
             });
 
@@ -137,7 +137,7 @@ class ItemController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => __('messages.item_update_failed'),
-                'status' => '0'
+                'status' => 0
             ]);
         }
     }
