@@ -147,7 +147,7 @@ class CustomerController extends Controller
     {
         return response()->json([
             'message' => __('messages.customer_details_returned_successfully'),
-            'data' => $customer->load('customerItems'),
+            'data' => $customer->load('customerItems', 'customerItems.styleRecords', 'customerItems.measurementRecords'),
             'status' => 1
         ]);
     }
